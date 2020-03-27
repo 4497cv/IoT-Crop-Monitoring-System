@@ -1,0 +1,1 @@
+https://help.ubidots.com/en/articles/2118658-connect-an-esp8266-stand-alone-to-ubidots-over-mqtt
