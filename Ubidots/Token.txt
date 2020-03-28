@@ -1,0 +1,5 @@
+BBFF-Sl9GbpiTrf6pVe93LsjEFK1tMr5ZCq
+
+#define TOKEN "BBFF-Sl9GbpiTrf6pVe93LsjEFK1tMr5ZCq" // Your Ubidots TOKEN
+#define WIFINAME "ARRIS-AC62" //Your SSID
+#define WIFIPASS "F3DA7DAD49EFE77B" // Your Wifi Pass
