@@ -1,33 +1,90 @@
-#ifndef LM35DZ_H
-#define LM35DZ_H
+/*
+    \file:   lm35dz.cpp
+    \brief:  This is source file for the API for the LM35DZ temperature sensor
+    \author: César Villarreal @4497cv
+    \date:   01/04/2020
+*/
 
 #include <Arduino.h>
 #include "lm35dz.h"
 
+static const float H_LPF[7]={-0.0956, 0.0468, 0.3148, 0.4525, 0.3148, 0.0468, -0.0956};
+static float xn[7];
 
+static lm35dz_t sensor_config_g;
 
-static float temperature_samples[NSAMPLES];
-static unsigned int samples_counter = 0;
-static float g_current_temp;
-
-/* ~~~~~~~~~~ LM35DZ functions ~~~~~~~~~~  */
-
-void LM35DZ_init(void)
+/*  
+    \brief      This function initialices the LM35DZ temperature sensor
+    \param[in]  lm35dz_t
+    \param[out] float
+*/  
+void LM35DZ_init(lm35dz_t sensor_config)
 {
-  pinMode(LM35DZ_PIN,     INPUT);
+  sensor_config.analog_pin = A0;
+  
+  switch(sensor_config.op_mode)
+  {
+   case normal:
+      sensor_config.analog_pin = sensor_config.analog_pin;
+   break;
+   case cd4051be:
+      sensor_config.analog_pin = A0;
+   break;
+   default:
+      sensor_config.analog_pin = A0;
+   break;
+  }
+  
+  pinMode(sensor_config.analog_pin,  INPUT);
 }
 
 /*  
-    \brief      This function returns the actual temperature value in celsius
-    \param[in]  void
+    \brief      This function filters the temperature read value from the sensor
+                to reduce noise.
+    \param[in]  temp_e
     \param[out] float
 */  
-float LM35DZ_get_temperature_celsius(void)
+float LM35DZ_get_current_temperature(temp_e temperature_format)
+{
+  uint8_t i;
+  volatile float x0;
+  volatile float y;
+  
+  /* inicializar el valor de la salida */
+  y=0;
+  /* lectura de valor del ADC  */
+  x0 = LM35DZ_read_temperature_celsius();
+
+  if(farenheit == temperature_format)
+  {
+    x0 = (x0*1.8)+32;
+  }
+  else
+  {
+    x0 = x0;
+  }
+
+  /* tomar muestras iniciales */
+  for(i = 6; i >= 1; i--) xn[i] = xn[i-1];
+  /* guardar el valor de temperatura actual */
+  xn[0] = x0;
+  /* realizar convolución de la entrada con la respuesta h1/h2 */
+  for(i = 0; i < 7 ; i++) y += xn[i]* H_LPF[i];
+  
+  return y;
+}
+
+/*  
+    \brief      This function retrieves the current temperature value from the sensor in deg. celcius
+    \param[in]  void
+    \param[out] float
+*/    
+static float LM35DZ_read_temperature_celsius(void)
 {
   volatile float data;
   float celcius_temp;
   float v_out;
-  //delay(500);
+  
   /* read analog data from temperature sensor */
   data = analogRead(LM35DZ_PIN);
   /* The analog values read from the Arduino may have a value between 0 and 1024, 
@@ -36,102 +93,3 @@ float LM35DZ_get_temperature_celsius(void)
   celcius_temp = v_out/10; /* 10 mv division*/
   return celcius_temp;
 }
-
-/*  
-    \brief      This function prints the actual temperature value in celsius
-    \param[in]  void
-    \param[out] float
-*/  
-static void LM35DZ_print_temperature_celsius(void)
-{
-  float celcius_temp;
-  celcius_temp = LM35DZ_get_temperature_celsius();
-  Serial.print(LM35DZ_get_temperature_celsius());
-  Serial.print(" C");
-  Serial.print("\n\r");
-}
-
-/*  
-    \brief    
-    \param[in]  void
-    \param[out] void
-*/  
-void LM35DZ_get_samples(void)
-{
-  int s_count;
-  int s_flag = 0;
-  
-  s_count = 0;
-  
-  do
-  {
-    if(NSAMPLES == s_count)
-    {
-      LM35DZ_calculate_standard_deviation();
-      s_flag = 1;
-    }
-    else if(NSAMPLES > s_count)
-    {
-      /* CAPTURE TEMPERATURE VALUE */
-      temperature_samples[s_count] = LM35DZ_get_temperature_celsius();
-      s_count++;
-    }
-  }while(s_flag == 0);
-}
-
-/*  
-    \brief      This function prints the samples array
-    \param[in]  void
-    \param[out] void
-*/  
-static void LM35DZ_print_samples(void)
-{
-  uint8_t i;
-  for(i=0; i < NSAMPLES; i++)
-  {
-    Serial.print("i = ");
-    Serial.print(i);
-    Serial.print(" | ");
-    Serial.print(temperature_samples[i]);
-    Serial.print("\n\r");
-  }
-}
-
-/*  
-    \brief      This function calculates the standard deviation for the
-                temperature and updates the current global temp. value
-    \param[in]  void
-    \param[out] void
-*/  
-static void LM35DZ_calculate_standard_deviation(void)
-{
-  float total_average;
-  float sigma_sqrrt_val_av;
-  float std_dev;
-  uint8_t i;
-
-  total_average = 0;
-  sigma_sqrrt_val_av = 0;
-  
-  for(i=0; i < NSAMPLES; i++) total_average += temperature_samples[i];
-
-  total_average = total_average/NSAMPLES;
-
-  for(i=0; i < NSAMPLES; i++) sigma_sqrrt_val_av += sqrt(abs((temperature_samples[i] - total_average)));
-  
-  std_dev = sqrt(sigma_sqrrt_val_av/(NSAMPLES-1));
-  
-  if(std_dev < 1)
-  {
-     g_current_temp = total_average;
-  }
-}
-
-float get_current_temperature_celcius(void)
-{
-   LM35DZ_get_samples();
-   return g_current_temp;
-}
-
-
-#endif

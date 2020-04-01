@@ -1,3 +1,10 @@
+/*
+    \file:   cd4051be.cpp
+    \brief:  This is header file for the API for the cd405be multiplexor
+    \author: César Villarreal @4497cv
+    \date:   01/04/2020
+*/
+
 #ifndef CD4051BE_H
 #define CD4051BE_H
 
@@ -22,12 +29,6 @@ typedef struct
   //void(*fptr)(void);  //Text string
   channel_e next[CH_NUM]; //FSM terminal states
 } channel_t;
-
-//typedef struct
-//{
-//  char* device_label;
-//  
-//} channel_t;
 
 void cd4051be_init(void);
 void cd4051be_setChannel(channel_e channelNumber);
