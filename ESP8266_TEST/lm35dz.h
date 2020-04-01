@@ -9,7 +9,7 @@
 
 #define NSTATES         3
 
-static float LM35DZ_get_temperature_celsius(void);
+float LM35DZ_get_temperature_celsius(void);
 static void  LM35DZ_print_temperature_celsius(void);
 void  LM35DZ_get_samples(void);
 static void  LM35DZ_print_samples(void);

@@ -22,7 +22,7 @@ void LM35DZ_init(void)
     \param[in]  void
     \param[out] float
 */  
-static float LM35DZ_get_temperature_celsius(void)
+float LM35DZ_get_temperature_celsius(void)
 {
   volatile float data;
   float celcius_temp;
@@ -67,7 +67,6 @@ void LM35DZ_get_samples(void)
   {
     if(NSAMPLES == s_count)
     {
-      //LM35DZ_print_samples();
       LM35DZ_calculate_standard_deviation();
       s_flag = 1;
     }
