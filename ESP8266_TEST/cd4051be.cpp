@@ -1,4 +1,9 @@
-
+/*
+    \file:   cd4051be.cpp
+    \brief:  This is source file for the API for the cd405be multiplexor
+    \author: César Villarreal @4497cv
+    \date:   01/04/2020
+*/
 #include "cd4051be.h"
 
 static channel_e ch_value_g;

@@ -1,11 +1,16 @@
+/*
+    \file:   iotcrpmonitor.cpp
+    \brief:  This is source file for the implementation of the IoT crop monitor
+    \author: César Villarreal @4497cv
+    \date:   01/04/2020
+*/
 /****************************************
  * Include Libraries
  ****************************************/
-#include <OneWire.h>
-#include <DallasTemperature.h>
 #include "UbidotsESPMQTT.h"
 #include "lm35dz.h"
 #include "cd4051be.h"
+#include <Ticker.h>  //Ticker Library
 /****************************************
  * Define Constants
  ****************************************/
@@ -14,18 +19,51 @@
 #define WIFIPASS       "F3DA7DAD49EFE77B" // Your Wifi Pass
 #define DEVICE_LABEL   "esp8266"
 #define PWROUT_VALUE   62
+#define TEMP_DELAY     60  //1 min delay
+#define LUM_DELAY      300 //5 min delay
+#define HUM_DELAY      120 //2 min delay
 
 static float temp_read;
-static uint8_t deviceCount;
+
 Ubidots client(TOKEN);
-// Setup a oneWire instance to communicate with any OneWire device
-OneWire oneWire(D3);  
-// Pass oneWire reference to DallasTemperature library
-DallasTemperature sensors(&oneWire);
+
+Ticker ticker0, ticker1, ticker2;
+
+void temperature_isr()
+{
+    float sensor_val;
+    cd4051be_setChannel(CH_0);
+    sensor_val = LM35DZ_get_current_temperature(celcius);
+    if((temp_limit_low < sensor_val) && (temp_limit_high > sensor_val))
+    {
+        client.add("lm35", sensor_val);
+        client.ubidotsPublish("node-mcu");  
+    }
+    client.loop();
+}
+
+void luminosity_isr()
+{
+    float sensor_val;
+    sensor_val = cd4051be_ChannelRead(CH_1);
+    sensor_val = (sensor_val*100.0)/1024.0;
+    client.add("luminosity", sensor_val);
+    client.ubidotsPublish("node-mcu");
+    client.loop();
+}
+
+void soil_humidity_isr()
+{
+    float sensor_val;
+    sensor_val = cd4051be_ChannelRead(CH_2);
+    sensor_val = (841-sensor_val)/4.05;
+    client.add("soil-humidity", sensor_val);
+    client.ubidotsPublish("node-mcu");
+    client.loop();
+}
 /****************************************
  * Auxiliar Functions
  ****************************************/
-
 uint8_t verifyPowerActive(void)
 {
   uint8_t flag;
@@ -66,9 +104,13 @@ void callback(char* topic, byte* payload, unsigned int length)
  ****************************************/
 void setup()
 {
+  lm35dz_t sensor_config;
+  sensor_config.op_mode = cd4051be;
+  
+  LM35DZ_init(sensor_config);
   /* multiplexer module initialization */
   cd4051be_init();
-  sensors.begin();
+
   /* establish serial communication */
   Serial.begin(115200);
   /* activate debugging messages on console */
@@ -79,67 +121,16 @@ void setup()
   client.begin(callback);
   /* subscribe to a device variable */
   client.ubidotsSubscribe("node-mcu","temperature"); //Insert the dataSource and Variable's Labels
-
-  deviceCount = 0;
-  // locate devices on the bus
-  Serial.println("Locating devices...");
-  Serial.print("Found ");
-  deviceCount = sensors.getDeviceCount();
-  Serial.print(deviceCount, DEC);
-  Serial.println(" devices.");
-  Serial.println("");
+  //client.ubidotsPublish("switch");
+  ticker0.attach(TEMP_DELAY, temperature_isr);
+  ticker1.attach(LUM_DELAY,  luminosity_isr);
+  ticker2.attach(HUM_DELAY,  soil_humidity_isr);
 }
 
 void loop()
 {
-  channel_e current_channel;
-  float sensor_val;
-  
   if(!client.connected())
   {
       client.reconnect();
   }
-
-  if(verifyPowerActive())
-  {
-      current_channel = cd4051be_getCurrentChannel();
-      
-      switch(current_channel)
-      {
-        case CH_0:
-            cd4051be_setChannel(CH_0);
-            sensor_val = get_current_temperature_celcius();
-            client.add("lm35", sensor_val);
-            client.ubidotsPublish("node-mcu");
-        break;
-        case CH_1:
-            sensor_val = cd4051be_ChannelRead(CH_1);
-            sensor_val = (sensor_val*100.0)/1024.0;
-            client.add("luminosity", sensor_val);
-            client.ubidotsPublish("node-mcu");
-        break;
-        case CH_2:
-            sensor_val = cd4051be_ChannelRead(CH_2);
-            sensor_val = (841-sensor_val)/4.05;
-            client.add("soil-humidity", sensor_val);
-            client.ubidotsPublish("node-mcu");
-        break;
-        default:
-            
-        break;
-      }
-      
-      if((current_channel == CH_2) && deviceCount > 0)
-      {
-        sensors.requestTemperatures();
-        sensor_val = sensors.getTempCByIndex(0);
-        client.add("soil-temp", sensor_val);
-        client.ubidotsPublish("node-mcu");
-      }
-    
-      client.loop();
-      cd4051be_SwitchChannel();
-  }
-
-  delay(20000);
 }
