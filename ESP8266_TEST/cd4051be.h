@@ -11,9 +11,9 @@
 #include <Arduino.h>
 
 /* Definitions */
-#define MUX_C          D2
-#define MUX_B          D1
-#define MUX_A          D0
+#define MUX_C          D3
+#define MUX_B          D2
+#define MUX_A          D1
 #define COM            A0
 #define CH_NUM         3
 
