@@ -1,4 +1,4 @@
-# ***Monitoreo de Cultivos***
+***Monitoreo de Cultivos***
 ============
 Desarrolladores:
 - **César Villarreal** 
@@ -12,5 +12,5 @@ Desarrolladores:
  4. Fotoresistencia
  5. Sensor de humedad de suelo capacitivo
 ============
-## Diagrama Esquemático
+Diagrama Esquemático
 ![Diagrama esquemático del circuito](doc/esquematico.jpg)
