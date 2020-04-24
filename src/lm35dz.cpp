@@ -6,7 +6,7 @@
 */
 
 #include <Arduino.h>
-#include "lm35dz.h"
+#include "../lib/lm35dz.h"
 
 static float H_LPF[7]={-0.0956, 0.0468, 0.3148, 0.4525, 0.3148, 0.0468, -0.0956};
 static float xn[7];

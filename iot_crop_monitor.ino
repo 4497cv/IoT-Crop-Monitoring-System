@@ -4,12 +4,13 @@
     \author: César Villarreal @4497cv
     \date:   01/04/2020
 */
+
 /****************************************
  * Include Libraries
  ****************************************/
-#include "UbidotsESPMQTT.h"
-#include "lm35dz.h"
-#include "cd4051be.h"
+#include "lib/UbidotsESPMQTT.h"
+#include "lib/lm35dz.h"
+#include "lib/cd4051be.h"
 /****************************************
  * Define Constants
  ****************************************/

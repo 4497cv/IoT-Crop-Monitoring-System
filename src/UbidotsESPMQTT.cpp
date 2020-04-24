@@ -25,7 +25,7 @@ Modified and Maintened by: Jose Garcia - Ubidots Inc
 
 */
 
-#include "UbidotsESPMQTT.h"
+#include "../lib/UbidotsESPMQTT.h"
 
 
 Ubidots::Ubidots(char* token){

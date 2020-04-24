@@ -1,5 +1,5 @@
 
-#include "soil_humidity.h"
+#include "../lib/soil_humidity.h"
 
 float soil_humidity_get_vwc()
 {

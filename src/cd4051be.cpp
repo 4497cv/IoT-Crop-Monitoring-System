@@ -4,7 +4,7 @@
     \author: César Villarreal @4497cv
     \date:   01/04/2020
 */
-#include "cd4051be.h"
+#include "../lib/cd4051be.h"
 
 static channel_e ch_value_g;
 
