@@ -11,3 +11,5 @@
  - Sensor de Temperatura LM35
  - Fotoresistencia
  - Sensor de humedad de suelo capacitivo
+
+![Diagrama esquemático del circuito](doc/esquematico)
