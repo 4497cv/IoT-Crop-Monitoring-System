@@ -1,9 +1,9 @@
-#***Monitoreo de Cultivos***
+#***Monitoreo de Cultivos IoT***
 ============
-Desarrolladores:
-- **César Villarreal** 
-- **Alexis Velázquez**
-- **Alejandro Mora**
+**Desarrolladores:**
+- César Villarreal
+- Alexis Velázquez
+- Alejandro Mora
 
 ##**Hardware Utilizado:**
  1. Microcontrolador Node MCU
