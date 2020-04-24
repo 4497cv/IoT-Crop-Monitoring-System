@@ -1,11 +1,10 @@
-#***Monitoreo de Cultivos IoT***
-============
+# ***Monitoreo de Cultivos IoT***
 **Desarrolladores:**
 - César Villarreal
 - Alexis Velázquez
 - Alejandro Mora
 
-##**Hardware Utilizado:**
+## **Hardware Utilizado:**
  1. Microcontrolador Node MCU
  2. Multiplexor CMOS de 8 canales CD4051BE
  3. Sensor de Temperatura LM35
