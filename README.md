@@ -1,6 +1,13 @@
-## ***Crop Monitoring System***
+## ***Monitoreo de Cultivos***
 
-**Developers:** 
-- **César Villarreal** @4497cv
+**Desarrollado por:** 
+- **César Villarreal** 
 - **Alexis Velázquez**
 - **Alejandro Mora**
+
+**Hardware:**
+ - Microcontrolador: Node MCU
+ - Multiplexor CMOS de 8 canales (CD4051BE)
+ - Sensor de Temperatura LM35
+ - Fotoresistencia
+ - Sensor de humedad de suelo capacitivo
