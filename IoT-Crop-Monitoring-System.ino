@@ -14,7 +14,7 @@
 /****************************************
  * Define Constants
  ****************************************/
-#define TOKEN          "BBFF-Sl9GbpiTrf6pVe93LsjEFK1tMr5ZCq" // Your Ubidots TOKEN
+#define TOKEN          "BBFF-sCI4BMLnYxSCDgJwsR5AwQlwIqYsl6" // Your Ubidots TOKEN
 #define WIFINAME_CASA  "ARRIS-AC62" //Your SSID
 #define WIFIPASS_CASA  "F3DA7DAD49EFE77B" // Your Wifi Pass
 #define WIFINAME       "The Coolest Pool Wifi"
@@ -103,7 +103,7 @@ void setup()
   /* activate debugging messages on console */
   client.setDebug(true); // Pass a true or false bool value to activate debug messages
   /* establish wifi communication */
-  client.wifiConnection(WIFINAME, WIFIPASS);
+  client.wifiConnection(WIFINAME_CASA, WIFIPASS_CASA);
   /* set message callback function */
   client.begin(callback);
   /* subscribe to a device variable */
@@ -140,7 +140,7 @@ void loop()
       break;
     }
 
-  delay(60000);
+  delay(30000);
   cd4051be_SwitchChannel();
   client.loop();
 }
