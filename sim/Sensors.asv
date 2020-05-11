@@ -66,28 +66,23 @@ gamma = log(R10/R100);
 Vin = 5;
 RTD = [2.072e3: -1: 670];
 lux = [0:1/14.02:100];
-R = 1e3;
+R = 2e3;
 % Puente de wheatstone linealizado
 Vo = (-Vin*(RTD/(2*R)));
-Vo = Vo+2.59;
 % Amplificador diferencial
-k = (3.3-0)/(-2.59-0.9125)
-Vo_2 = k*(Vo-0.9125);
+k = (3.3-0)/(-0.84+2.59)
+%Vo_2 = 
 figure;
 subplot(2,1,1);
 plot(RTD,Vo,'-black');
 title('Gráfica Vo vs R');
 ylabel('Voltaje de salida');
-xlabel('Resistencia (ohm)');
-xlim([670 2.072e3])
+xlabel('Resistencia (\ohm)');
 subplot(2,1,2);
-plot(RTD,Vo_2,'-r');
-title('Gráfica Vo vs R');
+plot(lux,Vo_lux,'-r');
+title('Gráfica Vo vs Lux');
 ylabel('Voltaje de salida');
-xlabel('Resistencia (ohm)');
-xlim([670 2.072e3])
-ylim([0 3.3])
-
+xlabel('Intensidad (lux)');
 
 %plot(t,vout);
 
